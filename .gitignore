@@ -1,7 +1,90 @@
-.DS_Store
-applet
-application.linux32
-application.linux64
-application.windows32
-application.windows64
-application.macosx
+/*
+Circuito de control de agitador magnetico
+
+En este codigo se describira el proceso para controlar un agitador 
+magnetico de 6 canales utilizando un arduino. Cada canal representa
+un motor DC y el sistema de control esta basado en la modulacion de 
+amplitud de pulso. 
+
+Los valores del PWM van desde 0 hasta 255 con una frecuencia base de 500hz (calcular rmp para cada uno)
+
+El canal uno va esta gobernado por el pin 3
+El canal dos va esta gobernado por el pin 5
+El canal tres va esta gobernado por el pin 6
+El canal cuatro va esta  por el pin 9
+El canal cinco va esta gobernado por el pin 10
+El canal seis va esta gobernado por el pin 11
+El boton para aumentar velocidad va en el pin 2 y el para disminuir velocidad
+en el pin 4.
+ */
+
+//Seccion de declaracion de variables 
+const int motor_1 = 3;                   //El pin con pwm va al motor en el canal 1.
+const int motor_2 = 5;                   //El pin con pwm va al motor en el canal 2.
+const int motor_3 = 6;                   //El pin con pwm va al motor en el canal 3.
+const int motor_4 = 9;                   //El pin con pwm va al motor en el canal 4.
+const int motor_5 = 10;                  //El pin con pwm va al motor en el canal 5.
+const int motor_6 = 11;                  //El pin con pwm va al motor en el canal 6.
+const int aumentar_velocidad= 2;         //Boton para aumentar la velocidad.
+const int disminuir_velocidad= 4;        //Boton para disminuir velocidad.
+const int selector= 7;                   //Selector de canal.
+int c_select   =0;                       //Contador del selector 
+int velocidad1 = 0;                      //Velocidad del motor_1.
+int velocidad2 = 0;                      //Velocidad del motor_2.
+int velocidad3 = 0;                      //Velocidad del motor_3.
+int velocidad4 = 0;                      //Velocidad del motor_4.
+int velocidad5 = 0;                      //Velocidad del motor_5.
+int velocidad6 = 0;                      //Velocidad del motor_6.
+int paso = 1;                            //Tamanio de paso de cambio de velocidad.
+int e_push_a=0;                          //Estado del boton de aumentar la velocidad
+int e_push_d=0;                          //Estado del boton de disminuir la velocidad
+int e_push_s=0;                          //Estado del boton de selector
+
+
+//La configuracion se inicia al encender el arduino.
+
+void setup()
+{
+  pinMode(motor_1, OUTPUT);//Declaramos el pin 3 como salida
+  pinMode(motor_2, OUTPUT);//Declaramos el pin 5 como salida
+  pinMode(motor_3, OUTPUT);//Declaramos el pin 6 como salida
+  pinMode(motor_4, OUTPUT);//Declaramos el pin 9 como salida
+  pinMode(motor_5, OUTPUT);//Declaramos el pin 10 como salida
+  pinMode(motor_6, OUTPUT);//Declaramos el pin 11 como salida
+  pinMode(aumentar_velocidad,INPUT);
+  pinMode(disminuir_velocidad,INPUT);
+}
+
+void loop()
+{
+  // Determinar la velocidad del pin 3:
+  analogWrite(motor_1, velocidad1);
+  analogWrite(motor_2, velocidad2);
+  analogWrite(motor_3, velocidad3);
+  analogWrite(motor_4, velocidad4);
+  analogWrite(motor_5, velocidad5);
+  analogWrite(motor_6, velocidad6);
+
+  //Determinar en que canal se esta
+  e_push_a=digitalRead(selector);
+// crear logica luego (e_push_s==HIGH)
+    
+  
+  
+  //Determinamos si se quiere aumentar o disminuir la velocidad
+  //Limiitar el valor a 255 para evitar overflow
+  e_push_a=digitalRead(aumentar_velocidad);
+  e_push_d=digitalRead(disminuir_velocidad);
+
+  if (e_push_a==HIGH)
+  {
+    velocidad1 = velocidad1 + paso;  
+  }
+  if (e_push_d==HIGH)
+  {
+    velocidad1 = velocidad1 - paso;
+  }
+
+  // Esperar 30 milisegundos para ver el efecto
+  delay(10);
+}
